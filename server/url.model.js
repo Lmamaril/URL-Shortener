@@ -17,16 +17,26 @@ function getAllUrlPairs() {
 }
 
 function findUrlPairByLongUrl(longUrl) {
-    return UrlModel.findById(longUrl).exec();
+    return UrlModel.findOne({longUrl: longUrl}).exec();
 }
 
 function findUrlPairByShortUrl(shortUrl) {
-    return UrlModel.findById(shortUrl).exec();
+    return UrlModel.findOne({shortUrl: shortUrl}).exec();
+}
+
+function updateLongUrl(shortUrl, longUrl ) {
+    return UrlModel.updateOne({shortUrl:shortUrl}, { longUrl:longUrl });
+}
+
+function deleteUrlPairByShortUrl(shortUrl) {
+    return UrlModel.deleteOne({shortUrl: shortUrl}).exec();
 }
 
 module.exports = {
     insertUrlPair,
     getAllUrlPairs,
     findUrlPairByLongUrl,
-    findUrlPairByShortUrl
+    findUrlPairByShortUrl,
+    updateLongUrl,
+    deleteUrlPairByShortUrl
 };
