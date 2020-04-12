@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import { Form, InputGroup, Input, Button, FormGroup, Label, CustomInput } from 'reactstrap';
+import { Form, InputGroup, Button, Label } from 'reactstrap';
+import { Row, Col, Container } from 'reactstrap';
 import { connect } from 'react-redux';
-import { generateRandomUrl, generateCustomUrl } from './redux/actions';
-import './styles/App.css';
+import { generateRandomUrl, generateCustomUrl, retrieveByShortUrl, deleteByShortUrl } from '../redux/actions';
+import '../styles/App.css';
+import CustomUrlCheckBox from  '../components/customUrlCheckbox'
+import RadioButtons from '../components/CRUDRadioButtons'
+import LongUrlInput from '../components/LongUrlInput'
 
 class App extends Component {
 
@@ -12,69 +16,81 @@ class App extends Component {
     this.state = {
      longUrl: "",
      shortUrl: "",
-     checkbox: false
+     checkbox: false,
+     urlFunctionOption:"create"
     }
-
-    this.onFieldChange = this.onFieldChange.bind(this);
-    this.checkboxChange = this.checkboxChange.bind(this);
   }
 
-  onFieldChange(event) {
+  handleOnFieldChange = (event) => {
     this.setState({ [event.target.id]: event.target.value });
   }
 
-  checkboxChange(event) {
+  handleCheckboxChange = (event) => {
     console.log(!event.target.checked)
     this.setState({ [event.target.id]: event.target.checked});
   }
 
-  handleSubmit() {
-    this.state.checkbox ? 
-    this.props.addCustom(this.state.longUrl, this.state.shortUrl):
-    this.props.addRandom(this.state.longUrl, this.state.shortUrl)
+  handleSubmit = () => {
+      if (this.state.urlFunctionOption === "create") {
+      this.state.checkbox ? 
+      this.props.addCustom(this.state.longUrl, this.state.shortUrl):
+      this.props.addRandom(this.state.longUrl, this.state.shortUrl)
+      } else if (this.state.urlFunctionOption === "delete") {
+        this.props.delete(this.state.shortUrl);
+      } else if ("retrieve") {
+        this.props.retrieve(this.state.shortUrl)
+      }
+
   }
 
+  handleRadioButtonChange = (event) => {
+    this.setState({ urlFunctionOption: event.target.id });
+  }
+    
   render() {
     return (
       <div className="App">
         <header className="App-header">
           <h1>Short URL Generator</h1>
+          </header>  
+          <Container>
+            <Row>
+              <Col>
+              {/* Radio Buttons for CRUD operations */}
+              <RadioButtons 
+                checkboxOption={ this.state.urlFunctionOption }
+                optionChange={ this.handleRadioButtonChange }/>
+              </Col>
+              <Col>
+                <Form inline>
+                
+                {/* Long URL Text Field */}
+                { this.state.urlFunctionOption === "retrieve" || this.state.urlFunctionOption === "delete" ?
+                "" : <LongUrlInput longUrl={this.state.longUrl} onFieldChange={this.handleOnFieldChange}/>
+                }      
 
-          <FormGroup>
-        <Label for="exampleCheckbox">Radios</Label>
-        <div>
-          <CustomInput type="radio" id="create" label="create" checked="true" />
-          <CustomInput type="radio" id="retrieve"  label="retrieve" />
-          <CustomInput type="radio" id="edit" label="edit"  />
-          <CustomInput type="radio" id="delete" label="delete" />
-        </div>
-      </FormGroup>
-          
-          <Form inline>
-            {/*Long URL Text Field */}
-            <InputGroup>
-            <Label for="longUrl">Long URL:   </Label>
-              <Input type="text" id="longUrl" value={this.state.longUrl} onChange={this.onFieldChange} />
-            </InputGroup>
+                {/* Customized Short URL Text Field */}
+                  {(this.state.checkbox && this.state.urlFunctionOption === "create") ? "":
+                    <InputGroup>
+                      <Label for="shortUrl">Short URL: </Label>
+                      <input type="text" id="shortUrl" value={this.state.shortUrl} onChange={this.handleOnFieldChange} />
+                    </InputGroup> 
+                  }
 
-            {/*Customized Short URL Text Field */}
-            {this.state.checkbox ? 
-            <InputGroup>
-              <Label for="shortUrl">Short URL: </Label>
-              <Input type="text" id="shortUrl" value={this.state.shortUrl} onChange={this.onFieldChange} />
-            </InputGroup> : ""}
-            <Button className="custom-blue mb-3" 
-              onClick={() => this.handleSubmit()}>
-                Make Short Url</Button>
-            <FormGroup check>
-            <Label check>
-              <Input type="checkbox" id="checkbox" onChange={this.checkboxChange} /> Add Custom Short Url
-            </Label>
-            </FormGroup>
-          </Form>
-              <p>{this.props.receivedLongUrl}</p>
-              <p>{this.props.receivedShortUrl}</p>
-    </header>
+                  {/* Checkbox for Create */} 
+                  { this.state.urlFunctionOption === "create" ?
+                    <CustomUrlCheckBox checkboxChange={this.handleCheckboxChange}/> : ""
+                  }
+
+                <Button className="custom-blue mb-3 " color="secondary" size="small"
+                  onClick={() => this.handleSubmit()}>
+                    Submit</Button>
+                </Form>
+              </Col>
+            </Row>
+          </Container>  
+          <p>{this.props.receivedLongUrl}</p>
+          <p>{this.props.receivedShortUrl}</p>  
       </div>
     )
   }
@@ -83,7 +99,9 @@ class App extends Component {
 const mapDispatchToProps = function(dispatch, props) {
   return {
     addRandom: (longUrl, shortUrl) => dispatch(generateRandomUrl(longUrl, shortUrl)),
-    addCustom: (longUrl, shortUrl)  => dispatch(generateCustomUrl(longUrl, shortUrl))
+    addCustom: (longUrl, shortUrl)  => dispatch(generateCustomUrl(longUrl, shortUrl)),
+    retrieve: (shortUrl) => dispatch(retrieveByShortUrl(shortUrl)),
+    delete: (shortUrl) => dispatch(deleteByShortUrl(shortUrl))
   }
 }
 

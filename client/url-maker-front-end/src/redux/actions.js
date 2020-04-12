@@ -17,7 +17,9 @@ export function generateRandomUrl (longUrl, shortUrl) {
         longUrl: longUrl,
         shortUrl: shortUrl
     }).then((response)=> {
-        return dispatch(generateUrls({displayLongUrl:response.data.longUrl, displayShortUrl:response.data.shortUrl}))
+        return dispatch(generateUrls({
+            displayLongUrl:response.data.longUrl, 
+            displayShortUrl:response.data.shortUrl}))
     })
     
     }
@@ -29,10 +31,33 @@ export function generateCustomUrl (longUrl, shortUrl) {
             longUrl:longUrl,
             shortUrl:shortUrl
         }).then((response)=>{
+            console.log(response.data)
             return dispatch(generateUrls({
                 displayLongUrl:response.data.longUrl, 
                 displayShortUrl:response.data.shortUrl}))
         })
-        
-        }
+    }
+}
+
+export function deleteByShortUrl(shortUrl) {
+    return function (dispatch) {
+        return Axios.delete(`/url/${shortUrl}/`, {
+            shortUrl:shortUrl
+        }).then((response)=>{
+            console.log(response.data)
+        })
+    }
+}
+
+export function retrieveByShortUrl(shortUrl) {
+    return function (dispatch) {
+        return Axios.get(`/url/${shortUrl}/retrieve/`, {
+            shortUrl:shortUrl
+        }).then((response)=>{
+            console.log(response.data)
+            return dispatch(generateUrls({
+                displayLongUrl:response.data.longUrl, 
+                displayShortUrl:response.data.shortUrl}))
+        })
+    }
 }
