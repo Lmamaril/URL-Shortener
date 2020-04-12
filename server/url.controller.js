@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 });
 
 // Get an existing url pair
-router.get('/:shortUrl', (req,res) => {
+router.get('/:shortUrl/retrieve', (req,res) => {
     const shortUrl = req.params.shortUrl;
     return UrlAccessor.findUrlPairByShortUrl(shortUrl)
     .then((response) => {
