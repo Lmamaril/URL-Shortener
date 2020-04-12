@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
         // if the long url doesn't exist in the db,
         // insert a unique short url with long url into the db
         if(!response) {
-            return UrlAccessor.insertUrlPair(randomKeyGen(longUrl));
+            return UrlAccessor.insertUrlPair(makeNewUrlPair(longUrl));
         } // if the long url already exists, return the response
         return response;
     }).then((response) => res.status(200).send(response), 
@@ -70,8 +70,8 @@ router.post('/:shortUrl', (req, res) => {
     })
 });
 
-const randomKeyGen = function(longUrl){
-
+// generate random key and return a new key pair
+const makeNewUrlPair = function(longUrl){
         let key = uuid();
         // Keep generating a new key if a short url already exists in the db
         while (UrlAccessor.findUrlPairByShortUrl(key).length) {
