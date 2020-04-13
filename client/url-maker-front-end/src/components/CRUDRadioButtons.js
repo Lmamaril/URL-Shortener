@@ -6,11 +6,11 @@ const CRUDRadioButtons = (props) => {
     return(
         <FormGroup >
             <Label for="urlFunctionCheckbox">Radios</Label>
-            <div className="left">
-                <CustomInput type="radio" id="create" label="create" 
+            <div >
+                <CustomInput className="left" type="radio" id="create" label="create" 
                     checked={props.checkboxOption === 'create'}
                     onChange={(event)=> props.optionChange(event)} default/>
-                <CustomInput type="radio" id="retrieve" label="retrieve" 
+                <CustomInput className="left" type="radio" id="retrieve" label="retrieve" 
                     checked={props.checkboxOption === 'retrieve'}
                     onChange={(event)=> props.optionChange(event)} />
                 <CustomInput type="radio" id="edit" label="edit"
@@ -22,7 +22,6 @@ const CRUDRadioButtons = (props) => {
             </div>
         </FormGroup>
     )
-
 }
 
 

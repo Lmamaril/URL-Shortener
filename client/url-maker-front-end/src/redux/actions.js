@@ -12,7 +12,6 @@ export const generateUrls = (urls) => ({
 export function generateRandomUrl (longUrl, shortUrl) {
 
  return function (dispatch) {
-    console.log("GEN RANDOM");
     return Axios.post('/url/', {
         longUrl: longUrl,
         shortUrl: shortUrl
@@ -26,7 +25,6 @@ export function generateRandomUrl (longUrl, shortUrl) {
 }
 export function generateCustomUrl (longUrl, shortUrl) {
     return function (dispatch) {
-        console.log("GEN Custom")
         return Axios.post(`/url/${shortUrl}/`, {
             longUrl:longUrl,
             shortUrl:shortUrl
@@ -59,5 +57,14 @@ export function retrieveByShortUrl(shortUrl) {
                 displayLongUrl:response.data.longUrl, 
                 displayShortUrl:response.data.shortUrl}))
         })
+    }
+}
+
+export function editByLongUrl(longUrl, shortUrl) {
+    return function (dispatch) {
+        return Axios.put(`/url/${shortUrl}/edit/`, {
+            longUrl:longUrl
+        }).then((response)=>{
+            console.log(response.data) })
     }
 }

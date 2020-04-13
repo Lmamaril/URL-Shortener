@@ -4,10 +4,11 @@ body {
 }
 
 .App {
-  text-align: center;
+  text-align: left;
 }
 
 .App-header {
+  text-align: center;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);

@@ -1,14 +1,14 @@
 import React from 'react';
 import { Label, Input, FormGroup} from 'reactstrap'
 
-const CustomUrlCheckbox = (props) => {
+const RandomCheckbox = (props) => {
     return (
         <FormGroup check>
             <Label check>
-            <Input type="checkbox" id="checkbox" onChange={props.checkboxChange} /> Add Custom Short Url
+            <Input type="checkbox" id="checkbox" onChange={props.checkboxChange} /> Generate Random Short Url
             </Label>
         </FormGroup>
     )
 }
 
-export default CustomUrlCheckbox;
+export default RandomCheckbox;

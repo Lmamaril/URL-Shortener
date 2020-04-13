@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Form, InputGroup, Button, Label } from 'reactstrap';
+import { Form, InputGroup, Button, Label, Input } from 'reactstrap';
 import { Row, Col, Container } from 'reactstrap';
 import { connect } from 'react-redux';
-import { generateRandomUrl, generateCustomUrl, retrieveByShortUrl, deleteByShortUrl } from '../redux/actions';
+import { generateRandomUrl, generateCustomUrl, retrieveByShortUrl, deleteByShortUrl, editByLongUrl } from '../redux/actions';
 import '../styles/App.css';
-import CustomUrlCheckBox from  '../components/customUrlCheckbox'
+import RandomUrlCheckBox from  '../components/randomUrlCheckbox'
 import RadioButtons from '../components/CRUDRadioButtons'
 import LongUrlInput from '../components/LongUrlInput'
 
@@ -17,7 +17,7 @@ class App extends Component {
      longUrl: "",
      shortUrl: "",
      checkbox: false,
-     urlFunctionOption:"create"
+     urlFunctionOption: "create"
     }
   }
 
@@ -33,12 +33,14 @@ class App extends Component {
   handleSubmit = () => {
       if (this.state.urlFunctionOption === "create") {
       this.state.checkbox ? 
-      this.props.addCustom(this.state.longUrl, this.state.shortUrl):
-      this.props.addRandom(this.state.longUrl, this.state.shortUrl)
-      } else if (this.state.urlFunctionOption === "delete") {
+      this.props.addRandom(this.state.longUrl, this.state.shortUrl):
+      this.props.addCustom(this.state.longUrl, this.state.shortUrl)
+      } else if ( this.state.urlFunctionOption === "delete") {
         this.props.delete(this.state.shortUrl);
-      } else if ("retrieve") {
+      } else if (this.state.urlFunctionOption === "retrieve") {
         this.props.retrieve(this.state.shortUrl)
+      } else if (this.state.urlFunctionOption === "edit") {
+        this.props.edit(this.state.longUrl, this.state.shortUrl)
       }
 
   }
@@ -54,14 +56,14 @@ class App extends Component {
           <h1>Short URL Generator</h1>
           </header>  
           <Container>
-            <Row>
-              <Col>
+            <Row className="justify-content-center">
+              <Col xs="3">
               {/* Radio Buttons for CRUD operations */}
               <RadioButtons 
                 checkboxOption={ this.state.urlFunctionOption }
                 optionChange={ this.handleRadioButtonChange }/>
               </Col>
-              <Col>
+              <Col xs="7">
                 <Form inline>
                 
                 {/* Long URL Text Field */}
@@ -70,16 +72,16 @@ class App extends Component {
                 }      
 
                 {/* Customized Short URL Text Field */}
-                  {(this.state.checkbox && this.state.urlFunctionOption === "create") ? "":
+                  {!(this.state.checkbox && this.state.urlFunctionOption === "create") ?
                     <InputGroup>
                       <Label for="shortUrl">Short URL: </Label>
-                      <input type="text" id="shortUrl" value={this.state.shortUrl} onChange={this.handleOnFieldChange} />
-                    </InputGroup> 
+                      <Input type="text" id="shortUrl" value={this.state.shortUrl} onChange={this.handleOnFieldChange} />
+                    </InputGroup> : ""
                   }
 
                   {/* Checkbox for Create */} 
                   { this.state.urlFunctionOption === "create" ?
-                    <CustomUrlCheckBox checkboxChange={this.handleCheckboxChange}/> : ""
+                    <RandomUrlCheckBox checkboxChange={this.handleCheckboxChange}/> : ""
                   }
 
                 <Button className="custom-blue mb-3 " color="secondary" size="small"
@@ -101,6 +103,7 @@ const mapDispatchToProps = function(dispatch, props) {
     addRandom: (longUrl, shortUrl) => dispatch(generateRandomUrl(longUrl, shortUrl)),
     addCustom: (longUrl, shortUrl)  => dispatch(generateCustomUrl(longUrl, shortUrl)),
     retrieve: (shortUrl) => dispatch(retrieveByShortUrl(shortUrl)),
+    edit: (longUrl, shortUrl) => dispatch(editByLongUrl(longUrl, shortUrl)),
     delete: (shortUrl) => dispatch(deleteByShortUrl(shortUrl))
   }
 }
