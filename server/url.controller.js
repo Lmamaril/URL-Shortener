@@ -4,6 +4,10 @@ const { uuid } = require('uuidv4');
 
 const UrlAccessor = require('./url.model');
 
+checkFormat = (longUrl)=>{
+    return longUrl.substring(0,7)==="http://" || longUrl.substring(0,8)==="https://" ? true : false   
+}
+
 // Get all Urls
 router.get('/', (req, res) => {
         return UrlAccessor.getAllUrlPairs()
@@ -43,7 +47,7 @@ router.post('/', (req, res) => {
     const longUrl = req.body.longUrl;
     console.log(longUrl.substring(0,6))
     // check if the long url already exists in the database
-    if (longUrl.substring(0,7)==="http://" || longUrl.substring(0,8)==="https://") {
+    if (checkFormat(longUrl)) {
         return UrlAccessor.findUrlPairByLongUrl(longUrl)
         .then((response) => {
             // if the long url doesn't exist in the db,
@@ -64,7 +68,7 @@ router.post('/', (req, res) => {
 router.post('/:shortUrl', (req, res) => {
     const longUrl = req.body.longUrl;
     const shortUrl = req.params.shortUrl;
-
+    if (checkFormat(longUrl)) {
     return UrlAccessor.findUrlPairByShortUrl(shortUrl).then((response)=>{
         if(!response) {
             // short url doesn't exist, check if long url exists
@@ -76,17 +80,19 @@ router.post('/:shortUrl', (req, res) => {
                     })
                 } else {
                     res.status(400).send({message:`Your long url already exists with` +
-                ` the short url ${response.shortUrl}`}) //TODO find out hot to access short url
+                ` the short url ${response.shortUrl}`}) 
                 }
             })
         } else {
-            if (response.longUrl === longUrl ) { //TODO find out hot to access response.Url
-                res.status(200).send({ message: "This url was already made" });
+            if (response.longUrl === longUrl ) { 
+                res.status(200).send({ longUrl:longUrl, shortUrl:shortUrl });
             } else {
                 res.status(400).send({ message: "Short url is already taken" });
             }
         }
-    })
+    })} else {
+        res.status(404).send({message:"The long url must start http:// or https://"});
+    }
 });
 
 // generate random key and return a new key pair
@@ -106,6 +112,8 @@ const makeNewUrlPair = function(longUrl){
 router.put('/:shortUrl/edit',function (req, res){
     const shortUrl = req.params.shortUrl;
     const newLongUrl = req.body.longUrl;
+
+    if (checkFormat(newLongUrl)) {
     // Check if the short Url exists
     return UrlAccessor.findUrlPairByShortUrl(shortUrl)
     .then((response) => {
@@ -125,12 +133,14 @@ router.put('/:shortUrl/edit',function (req, res){
                     } else {
                         res.status(404).send({message:`Cannot update. ${newLongUrl} `+
                         `already exists using short url ${response.shortUrl}`});
-                    }
-                    
+                    }                 
                 }
             })
         }
     })
+    } else {
+        res.status(404).send({message:"The long url must start http:// or https://"});
+    }
 });
 
 router.delete('/:shortUrl', function (req, res) {
