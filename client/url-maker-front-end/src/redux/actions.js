@@ -51,22 +51,6 @@ export function generateCustomUrl (longUrl, shortUrl) {
     }
 }
 
-export function deleteByShortUrl(shortUrl) {
-    return function (dispatch) {
-        return Axios.delete(`/url/${shortUrl}/`, {
-            shortUrl:shortUrl
-        }).then(() => { Promise.all([
-            dispatch(generateUrls({
-                displayLongUrl:"", 
-                displayShortUrl:""})),
-            dispatch(updateFeedback(`Short Url ${shortUrl} has been successfully deleted.`))
-        ])}, (error) => Promise.all([
-            dispatch(generateUrls({
-                displayLongUrl:"", 
-                displayShortUrl:""})),
-        dispatch(updateFeedback(error.response.data.message))]))
-    }
-}
 
 export function retrieveByShortUrl(shortUrl) {
     return function (dispatch) {
@@ -97,5 +81,32 @@ export function editByLongUrl(longUrl, shortUrl) {
             dispatch(updateFeedback(`Your link was successfully updated.`))])},
             (error) => { dispatch(updateFeedback(error.response.data.message
         ))})
+    }
+}
+
+export function deleteByShortUrl(shortUrl) {
+    return function (dispatch) {
+        return Axios.delete(`/url/${shortUrl}/`, {
+            shortUrl:shortUrl
+        }).then(() => { Promise.all([
+            dispatch(generateUrls({
+                displayLongUrl:"", 
+                displayShortUrl:""})),
+            dispatch(updateFeedback(`Short Url ${shortUrl} has been successfully deleted.`))
+        ])}, (error) => Promise.all([
+            dispatch(generateUrls({
+                displayLongUrl:"", 
+                displayShortUrl:""})),
+        dispatch(updateFeedback(error.response.data.message))]))
+    }
+}
+
+export function clearUrlsAndFeedback() {
+    return function (dispatch) {
+        Promise.all([
+            dispatch(generateUrls({
+                displayLongUrl:"", 
+                displayShortUrl:""})),
+        dispatch(updateFeedback(""))])
     }
 }

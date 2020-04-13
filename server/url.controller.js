@@ -17,9 +17,9 @@ router.get('/:shortUrl', (req,res) => {
     return UrlAccessor.findUrlPairByShortUrl(shortUrl)
     .then((response) => {
         if(!response) {
-            res.status(404).send({message:`Error finding: ${shortUrl}`});
+            res.status(404).send({message:`Short Url ${shortUrl} does not exist`});
         } else {
-            res.status(200).redirect("https://"+response.longUrl);
+            res.status(200).redirect(response.longUrl);
         }
     }) 
 })
@@ -30,7 +30,7 @@ router.get('/:shortUrl/retrieve', (req,res) => {
     return UrlAccessor.findUrlPairByShortUrl(shortUrl)
     .then((response) => {
         if(!response) {
-            res.status(404).send({message:`Error finding: ${shortUrl}`});
+            res.status(404).send({message:`Short Url ${shortUrl} does not exist`});
         } else {
             res.status(200).send(response);
         }
@@ -41,17 +41,23 @@ router.get('/:shortUrl/retrieve', (req,res) => {
 router.post('/', (req, res) => {
     // Retrieve long url
     const longUrl = req.body.longUrl;
+    console.log(longUrl.substring(0,6))
     // check if the long url already exists in the database
-    return UrlAccessor.findUrlPairByLongUrl(longUrl)
-    .then((response) => {
-        // if the long url doesn't exist in the db,
-        // insert a unique short url with long url into the db
-        if(!response) {
-            return UrlAccessor.insertUrlPair(makeNewUrlPair(longUrl));
-        } // if the long url already exists, return the response
-        return response;
-    }).then((response) => res.status(200).send(response), 
-    (error) => res.status(404).send({message:`Error posting Url:${error}`}));
+    if (longUrl.substring(0,7)==="http://" || longUrl.substring(0,8)==="https://") {
+        return UrlAccessor.findUrlPairByLongUrl(longUrl)
+        .then((response) => {
+            // if the long url doesn't exist in the db,
+            // insert a unique short url with long url into the db
+            if(!response) {
+                return UrlAccessor.insertUrlPair(makeNewUrlPair(longUrl));
+            } // if the long url already exists, return the response
+            return response;
+        }).then((response) => res.status(200).send(response), 
+        (error) => res.status(404).send({message:`Error posting url:${error}`}));
+    } else {
+        res.status(404).send({message:"The long url must start http:// or https://"});
+    }
+
 });
 
 // generate a custom short url
@@ -105,7 +111,7 @@ router.put('/:shortUrl/edit',function (req, res){
     .then((response) => {
         // update the short key
         if (!response) {
-            res.status(404).send({message:`Error finding: ${shortUrl}`});
+            res.status(404).send({message:`Short url ${shortUrl} does not exist`});
         } else {
             UrlAccessor.findUrlPairByLongUrl(newLongUrl)
             .then((response)=> {
@@ -117,8 +123,8 @@ router.put('/:shortUrl/edit',function (req, res){
                     if (response.shortUrl === shortUrl) {
                         res.status(404).send(`Short url is already made.`)
                     } else {
-                        res.status(404).send({message:`Cannot update.${newLongUrl} `+
-                        `already exists using ${response.shortUrl}`});
+                        res.status(404).send({message:`Cannot update. ${newLongUrl} `+
+                        `already exists using short url ${response.shortUrl}`});
                     }
                     
                 }
@@ -131,7 +137,7 @@ router.delete('/:shortUrl', function (req, res) {
     const shortUrl = req.params.shortUrl;
     return UrlAccessor.deleteUrlPairByShortUrl(shortUrl)
     .then((response) => res.status(200).send(response),
-        (error) => res.status(404).send({message:`Error deleting Url:${error}`}))
+        (error) => res.status(404).send({message:`Error deleting url:${error}`}))
 });
 
 module.exports = router;

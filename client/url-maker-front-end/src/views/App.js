@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, Button, Label, Input, FormText } from 'reactstrap';
 import { Row, Col, Container } from 'reactstrap';
 import { connect } from 'react-redux';
-import { generateRandomUrl, generateCustomUrl, retrieveByShortUrl, deleteByShortUrl, editByLongUrl } from '../redux/actions';
+import { generateRandomUrl, generateCustomUrl, retrieveByShortUrl, deleteByShortUrl, editByLongUrl, clearUrlsAndFeedback } from '../redux/actions';
 import '../styles/App.css';
 import RandomUrlCheckBox from  '../components/randomUrlCheckbox'
 import RadioButtons from '../components/CRUDRadioButtons'
@@ -46,6 +46,7 @@ class App extends Component {
   }
 
   handleRadioButtonChange = (event) => {
+    this.props.clear();
     this.setState({ urlFunctionOption: event.target.id });
   }
     
@@ -104,7 +105,8 @@ const mapDispatchToProps = function(dispatch, props) {
     addCustom: (longUrl, shortUrl)  => dispatch(generateCustomUrl(longUrl, shortUrl)),
     retrieve: (shortUrl) => dispatch(retrieveByShortUrl(shortUrl)),
     edit: (longUrl, shortUrl) => dispatch(editByLongUrl(longUrl, shortUrl)),
-    delete: (shortUrl) => dispatch(deleteByShortUrl(shortUrl))
+    delete: (shortUrl) => dispatch(deleteByShortUrl(shortUrl)),
+    clear: () => dispatch(clearUrlsAndFeedback())
   }
 }
 
