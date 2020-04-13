@@ -3,10 +3,10 @@ import {InputGroup, Label, Input} from 'reactstrap';
 
 const LongUrlInput = (props) => {
     return (
-        <InputGroup>
+        <div className="mb-2" >
             <Label for="longUrl">Long URL:   </Label>
-            <Input type="text"  bsSize="sm" id="longUrl" value={props.longUrl} onChange={props.onFieldChange} />
-        </InputGroup>
+            <Input type="textarea" className="w-100" bsSize="sm" id="longUrl" value={props.longUrl} onChange={props.onFieldChange} />
+        </div>
     )
 }
 

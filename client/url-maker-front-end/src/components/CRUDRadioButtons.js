@@ -7,7 +7,7 @@ const CRUDRadioButtons = (props) => {
         <FormGroup >
             <Label for="urlFunctionCheckbox">Radios</Label>
             <div >
-                <CustomInput className="left" type="radio" id="create" label="create" 
+                <CustomInput className="sm" type="radio" id="create" label="create" 
                     checked={props.checkboxOption === 'create'}
                     onChange={(event)=> props.optionChange(event)} default/>
                 <CustomInput className="left" type="radio" id="retrieve" label="retrieve" 

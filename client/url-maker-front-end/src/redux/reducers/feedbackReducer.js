@@ -1,10 +1,11 @@
-import { GENERATE_URLS } from '../actions'
+import { UPDATE_FEEDBACK } from '../actions'
 
 export default function provideStatus(state = { message: "" }, action) {
     switch (action.type) {
-        case GENERATE_URLS: {
+        case UPDATE_FEEDBACK: {
+            console.log("action payload", action.payload)
             return { ...state, 
-                message: action.message
+                message: action.payload
             }
         }
         default:

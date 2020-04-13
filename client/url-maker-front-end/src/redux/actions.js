@@ -9,6 +9,11 @@ export const generateUrls = (urls) => ({
     payload: urls
 });
 
+export const updateFeedback = (message) => ({
+    type: UPDATE_FEEDBACK,
+    payload: message
+})
+
 export function generateRandomUrl (longUrl, shortUrl) {
 
  return function (dispatch) {
@@ -19,7 +24,7 @@ export function generateRandomUrl (longUrl, shortUrl) {
         return dispatch(generateUrls({
             displayLongUrl:response.data.longUrl, 
             displayShortUrl:response.data.shortUrl}))
-    })
+    }, (error) => console.log("Error", error) )
     
     }
 }
@@ -33,7 +38,7 @@ export function generateCustomUrl (longUrl, shortUrl) {
             return dispatch(generateUrls({
                 displayLongUrl:response.data.longUrl, 
                 displayShortUrl:response.data.shortUrl}))
-        })
+        }, (error) => console.log("Error", error));
     }
 }
 
@@ -52,11 +57,14 @@ export function retrieveByShortUrl(shortUrl) {
         return Axios.get(`/url/${shortUrl}/retrieve/`, {
             shortUrl:shortUrl
         }).then((response)=>{
-            console.log(response.data)
-            return dispatch(generateUrls({
+            dispatch(generateUrls({
                 displayLongUrl:response.data.longUrl, 
-                displayShortUrl:response.data.shortUrl}))
-        })
+                displayShortUrl:response.data.shortUrl}));   
+
+        }).catch( (error) => {
+            console.log("Error", error.response.data.message)
+            dispatch(updateFeedback(error.response.data.message));
+        });
     }
 }
 

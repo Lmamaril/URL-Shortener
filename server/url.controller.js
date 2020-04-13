@@ -11,6 +11,19 @@ router.get('/', (req, res) => {
                 (error) =>  res.status(404).send({message:` Error finding the Urls:${error}`}));
 });
 
+// Redirect to LongUrl
+router.get('/:shortUrl', (req,res) => {
+    const shortUrl = req.params.shortUrl;
+    return UrlAccessor.findUrlPairByShortUrl(shortUrl)
+    .then((response) => {
+        if(!response) {
+            res.status(404).send({message:`Error finding: ${shortUrl}`});
+        } else {
+            res.status(200).redirect("https://"+response.longUrl);
+        }
+    }) 
+})
+
 // Get an existing url pair
 router.get('/:shortUrl/retrieve', (req,res) => {
     const shortUrl = req.params.shortUrl;

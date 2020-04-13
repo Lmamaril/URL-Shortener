@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, InputGroup, Button, Label, Input } from 'reactstrap';
+import { Form, InputGroup, Button, Label, Input, FormText } from 'reactstrap';
 import { Row, Col, Container } from 'reactstrap';
 import { connect } from 'react-redux';
 import { generateRandomUrl, generateCustomUrl, retrieveByShortUrl, deleteByShortUrl, editByLongUrl } from '../redux/actions';
@@ -52,18 +52,18 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
+        <header className="App-header my-4">
           <h1>Short URL Generator</h1>
           </header>  
           <Container>
             <Row className="justify-content-center">
-              <Col xs="3">
+              <Col xs="3" sm="2" md="2">
               {/* Radio Buttons for CRUD operations */}
               <RadioButtons 
                 checkboxOption={ this.state.urlFunctionOption }
                 optionChange={ this.handleRadioButtonChange }/>
               </Col>
-              <Col xs="7">
+              <Col xs="7" sm="5" md="4">
                 <Form inline>
                 
                 {/* Long URL Text Field */}
@@ -73,26 +73,26 @@ class App extends Component {
 
                 {/* Customized Short URL Text Field */}
                   {!(this.state.checkbox && this.state.urlFunctionOption === "create") ?
-                    <InputGroup>
+                    <div>
                       <Label for="shortUrl">Short URL: </Label>
-                      <Input type="text" id="shortUrl" value={this.state.shortUrl} onChange={this.handleOnFieldChange} />
-                    </InputGroup> : ""
+                      <Input type="text" className="mb-2" id="shortUrl" value={this.state.shortUrl} onChange={this.handleOnFieldChange} />
+                    </div> : ""
                   }
 
                   {/* Checkbox for Create */} 
                   { this.state.urlFunctionOption === "create" ?
-                    <RandomUrlCheckBox checkboxChange={this.handleCheckboxChange}/> : ""
+                    <div><RandomUrlCheckBox checkboxChange={this.handleCheckboxChange}/> </div>: "" 
                   }
+                  <FormText/>
+                <Button className="custom-blue mb-3 btn-block" color="secondary" size="small"
+                  onClick={() => this.handleSubmit()}>Submit</Button>
 
-                <Button className="custom-blue mb-3 " color="secondary" size="small"
-                  onClick={() => this.handleSubmit()}>
-                    Submit</Button>
                 </Form>
               </Col>
             </Row>
+          <p className="text-center">{this.props.receivedFeedback}</p>
+          <p className="text-center"><a href={this.props.receivedLongUrl}>{this.props.receivedShortUrl}</a></p>  
           </Container>  
-          <p>{this.props.receivedLongUrl}</p>
-          <p>{this.props.receivedShortUrl}</p>  
       </div>
     )
   }
@@ -112,7 +112,8 @@ const mapStateToProps = function (state, props) {
   return{
     message: state.feedback.message,
     receivedLongUrl: state.urlLinks.displayLongUrl,
-    receivedShortUrl: state.urlLinks.displayShortUrl
+    receivedShortUrl: state.urlLinks.displayShortUrl,
+    receivedFeedback: state.feedback.message
   }
 }
 
