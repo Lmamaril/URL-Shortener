@@ -15,16 +15,20 @@ export const updateFeedback = (message) => ({
 })
 
 export function generateRandomUrl (longUrl, shortUrl) {
-
  return function (dispatch) {
     return Axios.post('/url/', {
         longUrl: longUrl,
         shortUrl: shortUrl
-    }).then((response)=> {
-        return dispatch(generateUrls({
+    }).then((response)=> { Promise.all([
+        dispatch(generateUrls({
             displayLongUrl:response.data.longUrl, 
-            displayShortUrl:response.data.shortUrl}))
-    }, (error) => console.log("Error", error) )
+            displayShortUrl:response.data.shortUrl})),
+            dispatch(updateFeedback("Your Short Url Link:"))
+        ])}, (error) => Promise.all([
+        dispatch(generateUrls({
+            displayLongUrl:"", 
+            displayShortUrl:""})),
+        dispatch(updateFeedback(error.response.data.message))]))
     
     }
 }
@@ -33,12 +37,17 @@ export function generateCustomUrl (longUrl, shortUrl) {
         return Axios.post(`/url/${shortUrl}/`, {
             longUrl:longUrl,
             shortUrl:shortUrl
-        }).then((response)=>{
-            console.log(response.data)
-            return dispatch(generateUrls({
+        }).then((response)=> Promise.all([
+            dispatch(generateUrls({
                 displayLongUrl:response.data.longUrl, 
-                displayShortUrl:response.data.shortUrl}))
-        }, (error) => console.log("Error", error));
+                displayShortUrl:response.data.shortUrl})),
+                dispatch(updateFeedback("Your Short Url Link:")),
+          ]), (error) => Promise.all([
+            dispatch(generateUrls({
+                displayLongUrl:"", 
+                displayShortUrl:""})),
+                dispatch(updateFeedback(error.response.data.message))])
+          );
     }
 }
 
@@ -46,9 +55,16 @@ export function deleteByShortUrl(shortUrl) {
     return function (dispatch) {
         return Axios.delete(`/url/${shortUrl}/`, {
             shortUrl:shortUrl
-        }).then((response)=>{
-            console.log(response.data)
-        })
+        }).then(() => { Promise.all([
+            dispatch(generateUrls({
+                displayLongUrl:"", 
+                displayShortUrl:""})),
+            dispatch(updateFeedback(`Short Url ${shortUrl} has been successfully deleted.`))
+        ])}, (error) => Promise.all([
+            dispatch(generateUrls({
+                displayLongUrl:"", 
+                displayShortUrl:""})),
+        dispatch(updateFeedback(error.response.data.message))]))
     }
 }
 
@@ -56,15 +72,17 @@ export function retrieveByShortUrl(shortUrl) {
     return function (dispatch) {
         return Axios.get(`/url/${shortUrl}/retrieve/`, {
             shortUrl:shortUrl
-        }).then((response)=>{
+        }).then((response)=>{  Promise.all([
             dispatch(generateUrls({
                 displayLongUrl:response.data.longUrl, 
-                displayShortUrl:response.data.shortUrl}));   
-
-        }).catch( (error) => {
-            console.log("Error", error.response.data.message)
-            dispatch(updateFeedback(error.response.data.message));
-        });
+                displayShortUrl:response.data.shortUrl})),
+                dispatch(updateFeedback(`Your Short URL Link:`))
+        ])}, (error) => Promise.all([
+            dispatch(generateUrls({
+                displayLongUrl:"", 
+                displayShortUrl:""})),
+            dispatch(updateFeedback(error.response.data.message))])
+        )
     }
 }
 
@@ -72,7 +90,12 @@ export function editByLongUrl(longUrl, shortUrl) {
     return function (dispatch) {
         return Axios.put(`/url/${shortUrl}/edit/`, {
             longUrl:longUrl
-        }).then((response)=>{
-            console.log(response.data) })
+        }).then((response)=>{ Promise.all([
+            dispatch(generateUrls({
+                displayLongUrl:response.data.longUrl, 
+                displayShortUrl:response.data.shortUrl})),
+            dispatch(updateFeedback(`Your link was successfully updated.`))])},
+            (error) => { dispatch(updateFeedback(error.response.data.message
+        ))})
     }
 }

@@ -111,7 +111,7 @@ router.put('/:shortUrl/edit',function (req, res){
             .then((response)=> {
                 if (!response) {
                     UrlAccessor.updateLongUrl(shortUrl, newLongUrl).then(()=>{
-                        res.status(200).send({message:"Successfully updated"})
+                        res.status(200).send({longUrl:newLongUrl, shortUrl:shortUrl})
                     })
                 } else {
                     if (response.shortUrl === shortUrl) {

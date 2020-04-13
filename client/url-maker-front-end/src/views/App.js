@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, InputGroup, Button, Label, Input, FormText } from 'reactstrap';
+import { Form, Button, Label, Input, FormText } from 'reactstrap';
 import { Row, Col, Container } from 'reactstrap';
 import { connect } from 'react-redux';
 import { generateRandomUrl, generateCustomUrl, retrieveByShortUrl, deleteByShortUrl, editByLongUrl } from '../redux/actions';
@@ -68,14 +68,14 @@ class App extends Component {
                 
                 {/* Long URL Text Field */}
                 { this.state.urlFunctionOption === "retrieve" || this.state.urlFunctionOption === "delete" ?
-                "" : <LongUrlInput longUrl={this.state.longUrl} onFieldChange={this.handleOnFieldChange}/>
+                "" : <LongUrlInput className="full-width-text" longUrl={this.state.longUrl} onFieldChange={this.handleOnFieldChange}/>
                 }      
 
                 {/* Customized Short URL Text Field */}
                   {!(this.state.checkbox && this.state.urlFunctionOption === "create") ?
-                    <div>
+                    <div className="full-width-text">
                       <Label for="shortUrl">Short URL: </Label>
-                      <Input type="text" className="mb-2" id="shortUrl" value={this.state.shortUrl} onChange={this.handleOnFieldChange} />
+                      <Input type="text" className="mb-2 full-width-text" id="shortUrl" value={this.state.shortUrl} onChange={this.handleOnFieldChange} />
                     </div> : ""
                   }
 

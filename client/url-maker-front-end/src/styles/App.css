@@ -17,3 +17,7 @@ body {
 .left {
   align-items: left;
 }
+
+.full-width-text {
+  width: 100% !important;
+}
